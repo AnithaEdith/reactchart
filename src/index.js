@@ -925,9 +925,7 @@ class App extends Component {
     };
   }
 
-
   render() {
-
     var _ = require('lodash');
 
     /*var arr = [
@@ -940,44 +938,69 @@ class App extends Component {
         {"name":"child1","title":"Child 1","parent":"my"},
         {"name":"child2","title":"Child 2","parent":"my"}
     ];*/
+    /*
+    var davinciArray2 = [
+      {"name": "davinci", "value": "1161000"},
+      {"name": "P2O", "value": "1161000", "parent":"davinci"},
+      {"name":"O2B","value":"1043000","parent":"davinci"},
+      {"name":"UTC","value":"1043000","parent":"davinci"},
+      {"name":"group1","value":"1161000","parent":"P2O"},
+      {"name":"group2","value":"1161000","parent":"P2O"},
+      {"name":"group3","value":"2161000","parent":"O2B"},
+      {"name":"group4","value":"3161000","parent":"O2B"}
+    ];
+
+    function printdataArray(arr, name) {
+      console.log("name is" + name);
+      let list = _.filter(arr, item => item.parent === name)
+                  .map(function(datas) { return {"label":datas.name ,"value": datas.value}});
+      console.log(list);
+      return(list);
+    }*/
+
+    // var result = transformToTree(arr);
 
     var davinciArray = [
-          {"name": "davinci", "value": "1161000"},
-          {"name": "P2O", "value": "1161000", "parent":"davinci"},
-          {"name":"O2B","value":"1043000","parent":"davinci"},
-          {"name":"UTC","value":"1043000","parent":"davinci"},
-          {"name":"group1","value":"1161000","parent":"P2O"},
-          {"name":"group2","value":"1161000","parent":"P2O"},
-          {"name":"group3","value":"2161000","parent":"O2B"},
-          {"name":"group4","value":"3161000","parent":"O2B"}
+      {"name": "davinci", "value": "1161000"},
+      {"name": "P2O", "value": "1161000", "parent":"davinci"},
+      {"name":"O2B","value":"1043000","parent":"davinci"},
+      {"name":"UTC","value":"1043000","parent":"davinci"},
+      {"name":"group1","value":"1161000","parent":"P2O"},
+      {"name":"group2","value":"1161000","parent":"P2O"},
+      {"name":"group3","value":"2161000","parent":"O2B"},
+      {"name":"group4","value":"3161000","parent":"O2B"}
     ];
 
     function transformToTree(arr){
-      var nodes = {};    
+      var nodes = {};  
       return arr.filter(function(obj){
-          var id = obj["name"],
-              parentId = obj["parent"];
+        var id = obj["name"], value= obj["value"],
+            parentId = obj["parent"];
 
-          nodes[id] = _.defaults(obj, nodes[id], { children: [] });
-          parentId && (nodes[parentId] = (nodes[parentId] || { children: [] }))["children"].push(obj);
+        nodes[id] = _.defaults(obj, nodes[id], { linkeddata: [] }, { data: [] });
+        parentId && (nodes[parentId] = (nodes[parentId] || { linkeddata: [] }))["linkeddata"].push({"id": id, "linkedchart": obj});
+        parentId && (nodes[parentId] = (nodes[parentId] || { data: [] }))["data"].push({"label":id ,"value": value});
+        return !parentId;
+    });    
+  }
 
-          return !parentId;
-      });    
-    }
 
-    // var result = transformToTree(arr);
     var resultDaVinciTree = transformToTree(davinciArray);
+  //[{"name":"davinci","value":"1161000","linkeddata":[{"obj":{"name":"P2O","value":"1161000","parent":"davinci","linkeddata":[{"obj":{"name":"group1","value":"1161000","parent":"P2O","linkeddata":[],"data":[]}},{"obj":{"name":"group2","value":"1161000","parent":"P2O","linkeddata":[],"data":[]}}],"data":[{"label":"group1","value":"1161000"},{"label":"group2","value":"1161000"}]}},{"obj":{"name":"O2B","value":"1043000","parent":"davinci","linkeddata":[{"obj":{"name":"group3","value":"2161000","parent":"O2B","linkeddata":[],"data":[]}},{"obj":{"name":"group4","value":"3161000","parent":"O2B","linkeddata":[],"data":[]}}],"data":[{"label":"group3","value":"2161000"},{"label":"group4","value":"3161000"}]}},{"obj":{"name":"UTC","value":"1043000","parent":"davinci","linkeddata":[],"data":[]}}],"data":[{"label":"P2O","value":"1161000"},{"label":"O2B","value":"1043000"},{"label":"UTC","value":"1043000"}]}]
 
     return (
       <div>
-        <h1>FC REACT SAMPLE </h1>
+
+       <h1>FC REACT SAMPLE </h1>
+
         <ReactFC {...chartConfigs} />
 
         <Hello name={this.state.name} />
         <ReactFC {...chartconfig2} />
 
-        <div style={{'position':'fixed', 'bottom':'0'}}>
+        <div style={{'position':'fixed', 'bottom':'0', 'display': 'block'}}>
         {JSON.stringify(resultDaVinciTree)}
+
         </div>
       </div>
 
